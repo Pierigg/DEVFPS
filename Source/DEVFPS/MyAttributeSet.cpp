@@ -1,42 +1,32 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "GameplayEffectExtension.h"
 #include "MyAttributeSet.h"
 
-
-float UMyAttributeSet::GetHealth() const
+void UMyAttributeSet::OnRep_Health( const FGameplayAttributeData& OldHealth)
 {
-    return FMath::Max(Health.GetCurrentValue(), 0.0f);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet, Health, OldHealth);
 }
 
-void UMyAttributeSet::SetHealth(float NewVal)
+void UMyAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth)
 {
-    // Do not accept values lower than zero.
-    NewVal = FMath::Max(NewVal, 0.0f);
-
-    
-    UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
-    if (ensure(ASC))
-    {
-        ASC->SetNumericAttributeBase(GetHealthAttribute(), NewVal);
-    }
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet, MaxHealth, OldMaxHealth);
 }
 
-
-float UMyAttributeSet::GetDamage() const
+void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    return FMath::Max(Damage.GetCurrentValue(), 0.0f);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet, Health, COND_None, REPNOTIFY_Always);
 }
 
-void UMyAttributeSet::SetDamage(float NewVal)
+void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
-    // Do not accept values lower than zero.
-    NewVal = FMath::Max(NewVal, 0.0f);
+	Super::PostGameplayEffectExecute(Data);
 
+	if (Data.EvaluatedData.Attribute == GetHealth())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth());
+	}
 
-    UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
-    if (ensure(ASC))
-    {
-        ASC->SetNumericAttributeBase(GetDamageAttribute(), NewVal);
-    }
 }

@@ -25,6 +25,7 @@ class ADEVFPSCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
+public:
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
@@ -50,7 +51,7 @@ class ADEVFPSCharacter : public ACharacter, public IAbilitySystemInterface
 	//class UInputAction* FireAction;
 	//void Fire();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* ASC;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const
@@ -87,6 +88,9 @@ public:
 	/** Getter for the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> InitStatsEffect;
 
 protected:
 	/** Called for movement input */

@@ -7,7 +7,11 @@
 #include "DEVFPSMyAbilitySystemComponent.h"
 #include "MyAttributeSet.generated.h"
 
-
+#define ATTRIVUTE_ACCESSORS(ClassName, PropertyNamme) \
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 /**
  * 
  */
@@ -18,20 +22,21 @@ class DEVFPS_API UMyAttributeSet : public UAttributeSet
 	
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhereBlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Health)
+	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth", ReplicatedUsing = OnRep_MaxHealth)
+	FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, MaxHealth)
 
+	/*UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_Health)
+	FGameplayAttributeData Mana;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayAttributeData Damage;
+	UFUNCTION()
+	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
+	UFUNCTION()
+	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
 
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UMyAttributeSet, Health);
-	float GetHealth()const;
-	void SetHealth(float NewVal);
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(Health);
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data);
 
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UMyAttributeSet, Damage);
-	float GetDamage()const;
-	void SetDamage(float NewVal);
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(Damage);
 };

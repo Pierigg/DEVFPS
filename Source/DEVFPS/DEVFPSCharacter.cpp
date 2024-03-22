@@ -40,6 +40,9 @@ ADEVFPSCharacter::ADEVFPSCharacter()
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+
+	AttributeSet = CreateDefaultSubobject<UMyAttributeSet>(TEXT("AttributeState"));
 
 }
 
@@ -57,6 +60,9 @@ void ADEVFPSCharacter::BeginPlay()
 		}
 	}
 
+	// Init player stats
+
+	ASC->BP_ApplyGameplayEffectToSelf(InitStatsEffect, 1, ASC->MakeEffectContext());
 
 }
 
